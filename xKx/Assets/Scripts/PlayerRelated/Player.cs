@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -8,13 +9,26 @@ public class Player : MonoBehaviour
     public static Control Controller;
     public delegate void RegularControl();
     public event RegularControl ControlEvent;
+    
+    public BoxCollider CombatTrigger;
+
+    public enum State
+    {
+        Idle,
+        Combat,
+        Dialogue
+    }
+
+    public State PlayerState;
+    
     // Start is called before the first frame update
     public virtual void Awake()
     {
+        
         if (Singleton == null)
         {
             Singleton = this;
-            DontDestroyOnLoad(Singleton);
+//            DontDestroyOnLoad(Singleton);
         }
         else
         {
@@ -25,13 +39,23 @@ public class Player : MonoBehaviour
     
     public virtual void Start()
     {
-        
+        PlayerState = State.Idle;
     }
 
     // Update is called once per frame
     public virtual void Update()
     {
         ControlEvent?.Invoke();
+    }
+    
+    
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col == CombatTrigger)
+        {
+            PlayerState = State.Combat;
+        }
+        
     }
     
     
