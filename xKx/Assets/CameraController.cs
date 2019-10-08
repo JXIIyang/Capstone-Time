@@ -80,6 +80,9 @@ public class CameraController : MonoBehaviour
 
                 var num = Player.Singleton.transform.position.x - x;
                 Debug.Log("X Dis: " + num);
+                float h = Input.GetAxis("Mouse X");
+                float v = Input.GetAxis("Mouse Y");
+                
                 break;
             case Player.State.Idle:
                 if (x - Player.Singleton.transform.position.x < -0.5f)

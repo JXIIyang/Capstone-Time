@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     public static Control Controller;
     public delegate void RegularControl();
     public event RegularControl ControlEvent;
+
+    public Transform Shadow;
     
     public BoxCollider CombatTrigger;
 
@@ -20,6 +22,8 @@ public class Player : MonoBehaviour
     }
 
     public State PlayerState;
+
+    public Transform Model;
     
     // Start is called before the first frame update
     public virtual void Awake()
@@ -46,6 +50,15 @@ public class Player : MonoBehaviour
     public virtual void Update()
     {
         ControlEvent?.Invoke();
+        if (PlayerState == State.Idle)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, 0); 
+            Model.transform.localEulerAngles = Vector3.zero;
+        }
+        
+        Shadow.position = new Vector3(transform.position.x, -transform.position.y, 0);
+        Shadow.localEulerAngles = transform.localEulerAngles;
+        
     }
     
     

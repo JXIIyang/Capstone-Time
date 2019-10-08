@@ -33,18 +33,18 @@ public class Control : MonoBehaviour
 
     public void Update()
     {
-        if (Player.Singleton.PlayerState == Player.State.Idle)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y, 0); 
-        }
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
         {
             PlayerAnimator.Play("Run");
+            ShadowAnimator.Play("Run");
+            Debug.Log("run");
         }
         else
         {
+            Debug.Log("idle");
             PlayerAnimator.Play("Idle");
+            ShadowAnimator.Play("Idle");
         }
     }
     
@@ -54,5 +54,6 @@ public class Control : MonoBehaviour
         ForwardInput = (Input.GetKey(KeyCode.W) ? 1 : 0) + (Input.GetKey(KeyCode.S)? -1 : 0);
         transform.localEulerAngles = new Vector3(0, 90 * Mathf.Sign(ForwardInput), 0);
         transform.position += Mathf.Abs(ForwardInput) * transform.forward * Speed * Time.deltaTime;
+        Debug.Log(transform.forward);
     }
 }
