@@ -6,6 +6,11 @@ using UnityEngine;
 public class Control : MonoBehaviour
 {
     public float Speed;
+    public float JumpSpeed;
+    
+    public Vector3 JumpMovement = Vector3.zero;
+    public float Gravity;
+    public bool Grounded;
     public float ForwardInput;
 
     public Animator PlayerAnimator;
@@ -29,6 +34,7 @@ public class Control : MonoBehaviour
     public void Start()
     {
         Player.Singleton.ControlEvent += HorizontalMovement;
+        Player.Singleton.ControlEvent += Jump;
     }
 
     public void Update()
@@ -55,5 +61,27 @@ public class Control : MonoBehaviour
         transform.localEulerAngles = new Vector3(0, 90 * Mathf.Sign(ForwardInput), 0);
         transform.position += Mathf.Abs(ForwardInput) * transform.forward * Speed * Time.deltaTime;
         Debug.Log(transform.forward);
+    }
+    public void Jump()
+    {
+        var ty = transform.position.y;
+        var my = JumpMovement.y;
+        if (ty < 0.1f)
+        {
+            Grounded = true;
+            ty = 0;
+            my = 0;
+        }
+        if(!Grounded) {
+            my -= Gravity * Time.deltaTime;
+        } else {
+            if(Input.GetKeyDown(KeyCode.Space)) {
+                my = JumpSpeed;
+                Grounded = false;
+            }
+        }
+
+        JumpMovement = new Vector3(JumpMovement.x, my, JumpMovement.z);
+        transform.position = new Vector3(transform.position.x, ty + my, transform.position.z);
     }
 }

@@ -18,7 +18,8 @@ public class Player : MonoBehaviour
     {
         Idle,
         Combat,
-        Dialogue
+        Dialogue,
+        Transit
     }
 
     public State PlayerState;

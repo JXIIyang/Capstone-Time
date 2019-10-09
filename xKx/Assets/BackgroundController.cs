@@ -9,26 +9,31 @@ public class BackgroundController : MonoBehaviour
     public Transform Tier2;
     public Transform Tier3;
 
-    public Vector3 CamPos;
+    public bool CamStop;
     public Camera MainCam;
     public float RotSpeed;
 
+    public static BackgroundController Background;
 
 
+    void Awake()
+    {
+        Background = this;
+    }
 // Start is called before the first frame update
     void Start()
     {
-        CamPos = MainCam.transform.position;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (CameraController.Instance.CamState == Player.State.Idle && MainCam.transform.localPosition != CamPos)
+        if (CameraController.Instance.CamState != Player.State.Combat && !CamStop)
         {
+            Debug.Log("rot");
             transform.position += Player.Controller.ForwardInput  * Player.Singleton.transform.forward * Player.Controller.Speed * Time.deltaTime;
-            RotSpeed= Player.Controller.ForwardInput;
+            RotSpeed = RotSpeed <= Player.Controller.ForwardInput ? Player.Controller.ForwardInput : Mathf.Lerp(RotSpeed, Player.Controller.ForwardInput, 0.1f);
             Tier1.Rotate(Vector3.up, RotSpeed * 0.15f);
             Tier2.Rotate(Vector3.up, RotSpeed * 0.1f);
             Tier3.Rotate(Vector3.up, RotSpeed * 0.05f);
@@ -41,9 +46,6 @@ public class BackgroundController : MonoBehaviour
             Tier2.Rotate(Vector3.up, RotSpeed * 0.1f);
             Tier3.Rotate(Vector3.up, RotSpeed * 0.05f);
         }
-
-
-        CamPos = MainCam.transform.localPosition;
 
     }
 }
