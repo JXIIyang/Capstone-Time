@@ -31,7 +31,6 @@ public class BackgroundController : MonoBehaviour
     {
         if (CameraController.Instance.CamState != Player.State.Combat && !CamStop)
         {
-            Debug.Log("rot");
             transform.position += Player.Controller.ForwardInput  * Player.Singleton.transform.forward * Player.Controller.Speed * Time.deltaTime;
             RotSpeed = RotSpeed <= Player.Controller.ForwardInput ? Player.Controller.ForwardInput : Mathf.Lerp(RotSpeed, Player.Controller.ForwardInput, 0.1f);
             Tier1.Rotate(Vector3.up, RotSpeed * 0.15f);

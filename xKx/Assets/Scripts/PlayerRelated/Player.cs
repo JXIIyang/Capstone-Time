@@ -24,7 +24,6 @@ public class Player : MonoBehaviour
 
     public State PlayerState;
 
-    public Transform Model;
     
     // Start is called before the first frame update
     public virtual void Awake()
@@ -54,10 +53,8 @@ public class Player : MonoBehaviour
         if (PlayerState == State.Idle)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, 0); 
-            Model.transform.localEulerAngles = Vector3.zero;
         }
-        
-        Shadow.position = new Vector3(transform.position.x, -transform.position.y, 0);
+        Shadow.position = new Vector3(transform.position.x, -transform.position.y, transform.position.z);
         Shadow.localEulerAngles = transform.localEulerAngles;
         
     }

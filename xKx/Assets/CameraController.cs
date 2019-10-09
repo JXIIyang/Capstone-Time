@@ -14,7 +14,10 @@ public class CameraController : MonoBehaviour
     //CamState
     public Player.State CamState;
 
-    public static CameraController Instance; 
+    public static CameraController Instance;
+
+    private Vector3 offset;
+    private float dis;
 
 
     void Awake()
@@ -55,13 +58,16 @@ public class CameraController : MonoBehaviour
                         Vector3.Distance(transform.localEulerAngles, CamPresetRotation[1]) < 0.5f)
                     {
                         CamState = Player.State.Combat;
+                        transform.SetParent(Player.Singleton.transform, true);
+
                     }
                     break;
                 case Player.State.Idle:
-                    y = Mathf.Lerp(y, CamPresetPosition[0].y, 0.1f);
-                    z = Mathf.Lerp(z, CamPresetPosition[0].z, 0.2f);
-                    x = Mathf.Lerp(x, Player.Singleton.transform.position.x + CamPresetPosition[0].x, 0.1f);
-                    transform.localEulerAngles = Vector3.Lerp(transform.localEulerAngles, CamPresetRotation[0], 0.15f);
+                    transform.SetParent(null, true);
+                    y = Mathf.Lerp(y, CamPresetPosition[0].y, 0.05f);
+                    z = Mathf.Lerp(z, CamPresetPosition[0].z, 0.05f);
+                    x = Mathf.Lerp(x, Player.Singleton.transform.position.x + CamPresetPosition[0].x, 0.05f);
+                    transform.localEulerAngles = Vector3.Lerp(transform.localEulerAngles, CamPresetRotation[0], 0.1f);
                     var pos = new Vector3(Player.Singleton.transform.position.x + CamPresetPosition[0].x,CamPresetPosition[0].y, CamPresetPosition[0].z);
                     CamState = Player.State.Transit;
                     BackgroundController.Background.CamStop = false;
@@ -81,24 +87,17 @@ public class CameraController : MonoBehaviour
         switch (CamState)
         {
             case Player.State.Combat:
-                if (Mathf.Abs(z - Player.Singleton.transform.position.z) > 3f)
-                {
-                    z = Mathf.Lerp(z, Player.Singleton.transform.position.z, 0.05f);
-                } 
                 if (y - Player.Singleton.transform.position.y < 0.7f)
                 {
                     y = Mathf.Lerp(y, Player.Singleton.transform.position.y + 0.7f, 0.05f);
                 }
-                if (Player.Singleton.transform.position.x - x > 2.4f || Player.Singleton.transform.position.x - x < 2.6f )
-                {
-                    x = Mathf.Lerp(x, Player.Singleton.transform.position.x - 2.5f, 0.05f);
-                }
-
-                var num = Player.Singleton.transform.position.x - x;
-                Debug.Log("X Dis: " + num);
                 float h = Input.GetAxis("Mouse X");
                 float v = Input.GetAxis("Mouse Y");
-                
+                transform.RotateAround(Player.Singleton.transform.position, Player.Singleton.transform.up, h);
+
+                x = transform.position.x;
+                y = transform.position.y;
+                z = transform.position.z;
                 break;
             case Player.State.Idle:
                 BackgroundController.Background.CamStop = true;

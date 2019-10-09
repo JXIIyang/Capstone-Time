@@ -12,10 +12,13 @@ public class Control : MonoBehaviour
     public float Gravity;
     public bool Grounded;
     public float ForwardInput;
+    private float lastForwardInput;
+    public float InwardInput;
 
     public Animator PlayerAnimator;
     public Animator ShadowAnimator;
 
+    public Transform Model;
     
     public void Awake()
     {
@@ -40,28 +43,51 @@ public class Control : MonoBehaviour
     public void Update()
     {
 
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
         {
             PlayerAnimator.Play("Run");
             ShadowAnimator.Play("Run");
-            Debug.Log("run");
         }
         else
         {
-            Debug.Log("idle");
             PlayerAnimator.Play("Idle");
             ShadowAnimator.Play("Idle");
+        }
+        if (Player.Singleton.PlayerState == Player.State.Combat)
+        {
+            DepthMovement();
+            Debug.Log("zsubscribe");
         }
     }
     
     
     public void HorizontalMovement()
     {
-        ForwardInput = (Input.GetKey(KeyCode.W) ? 1 : 0) + (Input.GetKey(KeyCode.S)? -1 : 0);
-        transform.localEulerAngles = new Vector3(0, 90 * Mathf.Sign(ForwardInput), 0);
-        transform.position += Mathf.Abs(ForwardInput) * transform.forward * Speed * Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
+        {
+            ForwardInput = 1;
+            Model.transform.localEulerAngles = new Vector3(0, 0, 0); 
+        }
+
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W))
+        {
+            ForwardInput = -1;
+            Model.transform.localEulerAngles = new Vector3(0, 180, 0); 
+        }
+        if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S)) ForwardInput = 0;
+//        Model.transform.localEulerAngles = new Vector3(0, ForwardInput > 0 ? 0 : 180, 0);       
+        transform.position += ForwardInput * transform.forward * Speed * Time.deltaTime;
         Debug.Log(transform.forward);
     }
+    
+    public void DepthMovement()
+    {
+        InwardInput = (Input.GetKey(KeyCode.D) ? 1 : 0) + (Input.GetKey(KeyCode.A)? -1 : 0);
+        //transform.localEulerAngles = new Vector3(0, 90 * Mathf.Sign(ForwardInput), 0);
+        transform.position += InwardInput * transform.right * Speed * Time.deltaTime;
+        Debug.Log("zinput  " + InwardInput);
+    }
+    
     public void Jump()
     {
         var ty = transform.position.y;

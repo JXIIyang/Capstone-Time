@@ -1117,17 +1117,17 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: a4bd4c9077a1949f7a81c9c298e5b03f,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: a4bd4c9077a1949f7a81c9c298e5b03f,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: a4bd4c9077a1949f7a81c9c298e5b03f,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: a4bd4c9077a1949f7a81c9c298e5b03f,
         type: 3}
@@ -1312,8 +1312,10 @@ MonoBehaviour:
   Gravity: 0.08
   Grounded: 0
   ForwardInput: 0
+  InwardInput: 0
   PlayerAnimator: {fileID: 151070263}
   ShadowAnimator: {fileID: 1280144701}
+  Model: {fileID: 151070261}
 --- !u!114 &1720364804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1329,7 +1331,6 @@ MonoBehaviour:
   Shadow: {fileID: 1280144699}
   CombatTrigger: {fileID: 1174354046}
   PlayerState: 0
-  Model: {fileID: 151070261}
 --- !u!4 &1720364805
 Transform:
   m_ObjectHideFlags: 0
