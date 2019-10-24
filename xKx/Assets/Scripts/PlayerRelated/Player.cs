@@ -9,8 +9,6 @@ public class Player : MonoBehaviour
     public static Control Controller;
     public delegate void RegularControl();
     public event RegularControl ControlEvent;
-
-    public Transform Shadow;
     
     public BoxCollider CombatTrigger;
 
@@ -54,8 +52,6 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, 0); 
         }
-        Shadow.position = new Vector3(transform.position.x, -transform.position.y, transform.position.z);
-        Shadow.localEulerAngles = transform.localEulerAngles;
         
     }
     

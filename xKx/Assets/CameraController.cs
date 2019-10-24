@@ -49,14 +49,17 @@ public class CameraController : MonoBehaviour
             switch (Player.Singleton.PlayerState)
             {
                 case Player.State.Combat:
+                    var offset = (Player.Controller.ForwardInput - 1) * 0.8f;
                     y = Mathf.Lerp(y, CamPresetPosition[1].y, 0.05f);
                     z = Mathf.Lerp(z, CamPresetPosition[1].z, 0.1f);
-                    x = Mathf.Lerp(x, Player.Singleton.transform.position.x + CamPresetPosition[1].x, 0.05f);
+                    x = Mathf.Lerp(x, Player.Singleton.transform.position.x + offset + CamPresetPosition[1].x, 0.05f);
                     transform.localEulerAngles = Vector3.Lerp(transform.localEulerAngles, CamPresetRotation[1], 0.05f);
                     CamState = Player.State.Transit;
-                    if (Vector3.Distance(transform.position, Player.Singleton.transform.position + CamPresetPosition[1]) < 1f &&
-                        Vector3.Distance(transform.localEulerAngles, CamPresetRotation[1]) < 0.5f)
+                    if (Vector3.Distance(transform.position, Player.Singleton.transform.position + Vector3.right * offset + CamPresetPosition[1]) < 2 &&
+                        Vector3.Distance(transform.localEulerAngles, CamPresetRotation[1]) < 2f)
                     {
+                        //transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y, 2.8f),0.2f);
+                        //transform.localEulerAngles = CamPresetRotation[1];
                         CamState = Player.State.Combat;
                         transform.SetParent(Player.Singleton.transform, true);
 
@@ -87,16 +90,16 @@ public class CameraController : MonoBehaviour
         switch (CamState)
         {
             case Player.State.Combat:
-                if (y - Player.Singleton.transform.position.y < 0.7f)
-                {
-                    y = Mathf.Lerp(y, Player.Singleton.transform.position.y + 0.7f, 0.05f);
-                }
+//                if (y - Player.Singleton.transform.position.y < 0.7f)
+//                {
+//                    y = Mathf.Lerp(y, Player.Singleton.transform.position.y + 0.7f, 0.05f);
+//                }
                 float h = Input.GetAxis("Mouse X");
                 float v = Input.GetAxis("Mouse Y");
                 transform.RotateAround(Player.Singleton.transform.position, Player.Singleton.transform.up, h);
 
                 x = transform.position.x;
-                y = transform.position.y;
+                y = 0.7f - Player.Controller.JumpMovement.y;
                 z = transform.position.z;
                 break;
             case Player.State.Idle:

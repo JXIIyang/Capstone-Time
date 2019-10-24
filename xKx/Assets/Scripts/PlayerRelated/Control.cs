@@ -14,11 +14,14 @@ public class Control : MonoBehaviour
     public float ForwardInput;
     private float lastForwardInput;
     public float InwardInput;
+    public Vector3 F_Rotate = Vector3.zero;
+    public Vector3 R_Rotate = Vector3.zero;
 
     public Animator PlayerAnimator;
     public Animator ShadowAnimator;
 
     public Transform Model;
+    public Transform Shadow;
     
     public void Awake()
     {
@@ -53,26 +56,36 @@ public class Control : MonoBehaviour
             PlayerAnimator.Play("Idle");
             ShadowAnimator.Play("Idle");
         }
-        if (Player.Singleton.PlayerState == Player.State.Combat)
+
+        if (Player.Singleton.PlayerState == Player.State.Idle)
+        {
+            R_Rotate = Vector3.zero;
+        }
+        if (Player.Singleton.PlayerState == Player.State.Combat && CameraController.Instance.CamState == Player.State.Combat)
         {
             DepthMovement();
             Debug.Log("zsubscribe");
         }
+        
+        Shadow.position = new Vector3(transform.position.x, -transform.position.y, transform.position.z);
+        Shadow.localEulerAngles = Model.transform.localEulerAngles + transform.localEulerAngles;
     }
     
     
     public void HorizontalMovement()
     {
+        Model.transform.LookAt(Model.transform.position + new Vector3(ForwardInput, 0, -InwardInput));
+        //Model.transform.localEulerAngles = Vector3.Lerp(Model.transform.localEulerAngles, F_Rotate + R_Rotate, 0.1f);
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
         {
             ForwardInput = 1;
-            Model.transform.localEulerAngles = new Vector3(0, 0, 0); 
+//            F_Rotate = Vector3.zero;
         }
 
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W))
         {
             ForwardInput = -1;
-            Model.transform.localEulerAngles = new Vector3(0, 180, 0); 
+//            F_Rotate = Vector3.up * 180;
         }
         if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S)) ForwardInput = 0;
 //        Model.transform.localEulerAngles = new Vector3(0, ForwardInput > 0 ? 0 : 180, 0);       
@@ -82,8 +95,20 @@ public class Control : MonoBehaviour
     
     public void DepthMovement()
     {
-        InwardInput = (Input.GetKey(KeyCode.D) ? 1 : 0) + (Input.GetKey(KeyCode.A)? -1 : 0);
-        //transform.localEulerAngles = new Vector3(0, 90 * Mathf.Sign(ForwardInput), 0);
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+        {
+            InwardInput = -1;
+//            R_Rotate = Vector3.up * -90;
+        }
+
+        if (Input.GetKeyDown(KeyCode.D) || Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
+        {
+            InwardInput = 1;
+//            R_Rotate = Vector3.up * 90; 
+        }
+        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)) 
+            InwardInput = 0;
+        if (Mathf.Abs(ForwardInput) > 0.01f && Mathf.Abs(InwardInput) < 0.01f) R_Rotate = Vector3.zero;
         transform.position += InwardInput * transform.right * Speed * Time.deltaTime;
         Debug.Log("zinput  " + InwardInput);
     }
@@ -92,7 +117,7 @@ public class Control : MonoBehaviour
     {
         var ty = transform.position.y;
         var my = JumpMovement.y;
-        if (ty < 0.1f)
+        if (ty < 0.001f)
         {
             Grounded = true;
             ty = 0;
