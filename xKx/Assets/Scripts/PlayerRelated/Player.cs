@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
         if (Singleton == null)
         {
             Singleton = this;
-//            DontDestroyOnLoad(Singleton);
+//          DontDestroyOnLoad(Singleton);
         }
         else
         {
@@ -64,6 +64,6 @@ public class Player : MonoBehaviour
         }
         
     }
-    
-    
+
+
 }

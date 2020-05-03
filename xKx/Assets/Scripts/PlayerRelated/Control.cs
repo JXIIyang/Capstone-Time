@@ -40,7 +40,7 @@ public class Control : MonoBehaviour
     public void Start()
     {
         Player.Singleton.ControlEvent += HorizontalMovement;
-        Player.Singleton.ControlEvent += Jump;
+        //Player.Singleton.ControlEvent += Jump;
     }
 
     public void Update()

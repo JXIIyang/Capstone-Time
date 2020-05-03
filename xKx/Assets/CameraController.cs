@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         var x = transform.position.x;
-        var y= transform.position.y;
+        var y = transform.position.y;
         var z = transform.position.z;
 
         if (Input.GetKeyUp(KeyCode.P)) Player.Singleton.PlayerState = Player.State.Idle;
