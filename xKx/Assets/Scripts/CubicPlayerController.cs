@@ -52,6 +52,9 @@ public class CubicPlayerController : MonoBehaviour
     public Material shadowReverse;
     public Material whiteCutOut;
 
+    public GameObject vfxSlash;
+    public GameObject vfxJumpSlash;
+    private List<GameObject> _allVfx = new List<GameObject>();
 
     public enum PlayerState
     {
@@ -82,6 +85,8 @@ public class CubicPlayerController : MonoBehaviour
     }
 
     public Orient FaceOrient;
+
+    public bool Death;
     
     
     private void Awake()
@@ -99,12 +104,20 @@ public class CubicPlayerController : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R)) SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        
+        if (Death)
+        {   
+            if ((!ShadowMode && transform.position.y > 0.01f) || (ShadowMode && transform.position.y < -0.01f)) Jump();
+            else transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+            return;
+        }
         Movement();
         Jump();
         Attack();
         ShadowDash();
         
-        if (Input.GetKeyDown(KeyCode.R)) SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
 
     }
 
@@ -140,7 +153,7 @@ public class CubicPlayerController : MonoBehaviour
     private void Jump()
     {
         var index = Mathf.Sign(Gravity);
-        if (Input.GetKeyDown(JumpKey) && JumpAllowed())
+        if (Input.GetKeyDown(JumpKey) && JumpAllowed() && !Death)
         {
             MyLastState = MyState;
             MyState = PlayerState.Jump;
@@ -180,7 +193,7 @@ public class CubicPlayerController : MonoBehaviour
         if (MyState == PlayerState.Attack && MyLastState == PlayerState.Jump)
         {
             _gravity += index * 0.2f * Time.deltaTime;
-            _jumpSpeed -=  0.5f * _gravity * Time.deltaTime;
+            _jumpSpeed -=  0.7f * _gravity * Time.deltaTime;
             transform.Translate(Vector3.up * _jumpSpeed);
             
             if ((Gravity > 0 && transform.position.y < -0.01f) || (Gravity < 0 && transform.position.y > 0.01f))
@@ -232,9 +245,22 @@ public class CubicPlayerController : MonoBehaviour
         {
             MyLastState = MyState;
             MyState = PlayerState.Attack;
-            PlayerAnimator.SetTrigger("Attack");
-            ShadowAnimator.SetTrigger("Attack");
-            
+
+            if (transform.position.y < 0.12f && transform.position.y > -0.12f)
+            {
+                PlayerAnimator.SetTrigger("Attack");
+                ShadowAnimator.SetTrigger("Attack");
+
+                StartCoroutine(DestroyAfter(0.3f, vfxSlash, 1f));
+            }
+            else
+            {
+                PlayerAnimator.SetTrigger("JumpAttack");
+                ShadowAnimator.SetTrigger("JumpAttack");
+                StartCoroutine(DestroyAfter(0.1f, vfxJumpSlash, 1f));
+            }
+
+
         }
 
         if (MyState == PlayerState.Attack)
@@ -245,7 +271,8 @@ public class CubicPlayerController : MonoBehaviour
             var o = FaceOrient == Orient.Right ? 1 : -1;
             transform.Translate(Vector3.right * o * Speed * 0.2f * Time.deltaTime);
 
-            if (PlayerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && PlayerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f)
+            if ((PlayerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && PlayerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f)||
+                (PlayerAnimator.GetCurrentAnimatorStateInfo(0).IsName("JumpAttack") && PlayerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f) )
             {
                 MyState = MyLastState;
                 MyLastState = PlayerState.Attack;
@@ -257,6 +284,15 @@ public class CubicPlayerController : MonoBehaviour
         
         
     }
+    
+    IEnumerator  DestroyAfter( float delay, GameObject g, float seconds)
+    {
+        yield return new WaitForSeconds(delay);
+        var v = Instantiate(g, PlayerModel, false);                                
+        yield return new WaitForSeconds(seconds);
+        Destroy(v);
+    }
+
     
     private void ShadowDash()
     {

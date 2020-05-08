@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Attack
   - Enemy
+  - EnemyWeapon
+  - PlayerCollider
+  - Metaball
   layers:
   - Default
   - TransparentFX
@@ -17,7 +20,7 @@ TagManager:
   - 
   - PlayerIgnore
   - Player
-  - 
+  - Metaball
   - 
   - 
   - 
